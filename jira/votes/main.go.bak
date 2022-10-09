@@ -1,0 +1,105 @@
+package main
+
+import (
+	"fmt"
+	"sort"
+	"strings"
+)
+
+func main() {
+	fmt.Println(rankTeams([]string{"WXYZ", "XYZW"}))
+}
+
+// func rankTeams(votes []string) string {
+
+// 	if len(votes) == 1 {
+// 		return votes[0]
+// 	}
+
+// 	var dict = map[string][]int{} // key is the letter and val is the count by position
+
+// 	for _, vote := range votes {
+// 		for i, letter := range vote {
+// 			if _, ok := dict[string(letter)]; !ok {
+// 				dict[string(letter)] = make([]int, len(vote))
+// 			}
+// 			dict[string(letter)][i]++
+// 		}
+// 	}
+// 	fmt.Println(dict)
+
+// 	var rank string
+
+// 	for i := 0; i < len(votes[0]); i++ {
+// 		max := 0
+// 		winner := ""
+// 		for key, val := range dict {
+// 			if val[i] > max {
+// 				max = val[i]
+// 				winner = key
+// 				continue
+// 			}
+// 			// what will happen here?
+// 			if val[i] == max {
+// 				max = val[i]
+// 				winner += key
+// 				continue
+// 			}
+// 		}
+// 		rank += winner
+// 	}
+
+// 	// TODO: what about the tie situation
+// 	return rank
+// 	// we can make map with counts of position
+// }
+
+// or recursive?
+// func rankTeamsByPos(votes []string, pos int) {
+
+// }
+
+// what can we do now for this?
+
+func rankTeams(votes []string) string {
+	voteMap := make(map[rune][]int)
+	l := len(votes[0])
+
+	for _, vote := range votes {
+		for idx, ch := range vote {
+			_, ok := voteMap[ch]
+			if !ok {
+				voteMap[ch] = make([]int, l)
+			}
+			voteMap[ch][idx]++
+		}
+	}
+	fmt.Println(voteMap)
+	keys := make([]rune, 0, len(voteMap))
+	for k := range voteMap {
+		keys = append(keys, k)
+	}
+	fmt.Println(keys)
+
+	sort.SliceStable(keys, func(a, b int) bool {
+		va := voteMap[keys[a]]
+		vb := voteMap[keys[b]]
+		for i := 0; i < l; i++ {
+			fmt.Println(va[i])
+			fmt.Println(vb[i])
+			if va[i] != vb[i] {
+				return va[i]-vb[i] > 0
+			}
+		}
+		return keys[b]-keys[a] > 0
+	})
+	fmt.Println(keys)
+	fmt.Println(voteMap)
+
+	var sb strings.Builder
+	for _, k := range keys {
+		sb.WriteString(string(k))
+	}
+
+	return sb.String()
+}

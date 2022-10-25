@@ -1,11 +1,25 @@
 #### Sliding Window
 - Maximum sum subarray of size "K" (easy)
 - Longest substring with "K" distinct characters (medium)
+- What is this?
+  - assign the first pointer to one index signifying where the window starts, and the second pointer to another index signifying where the window ends.
+  - between these two points, gives a subset of data
+  - shift to get new subset
+
+[Sliding Window Algorithm Approach(Go example)](https://sdever.medium.com/sliding-window-algorithm-approach-go-example-9df848c76077)
+
 
 #### Two pointers
 - Reverse arr
 - Rotate arr
 - Squaring a sorted array
+
+- Implementation for rotating array
+  - reverse the arr using the two pointers
+  - reverse arr[:len(nums)-k] => a
+  - reverse arr[len(nums)-k:] => b
+  - c => append(a,b)
+  - reverse c
 
 #### Fast and Slow pointers
 - Linked list or array

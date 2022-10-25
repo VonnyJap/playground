@@ -26,3 +26,31 @@ func (g *Graph) DFS(v int) []int {
 	}
 	return set
 }
+
+// what do I want to do when detect a cycle?
+// from this point I want to do dfs and check if it is in path
+func (g *Graph) hasCycle(v int, path []int) bool {
+
+	g.Visited[v] = true
+	path = append(path, v)
+	for _, node := range g.Edges[v] {
+		if inSlice(path, node) {
+			return true
+		}
+		if !g.Visited[v] {
+			if g.hasCycle(node, path) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func inSlice(haystack []int, needle int) bool {
+	for _, item := range haystack {
+		if item == needle {
+			return true
+		}
+	}
+	return false
+}

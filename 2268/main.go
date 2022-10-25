@@ -25,7 +25,9 @@ func minimumKeypresses(s string) int {
 	for _, n := range dict {
 		arr = append(arr, n)
 	}
+	fmt.Println(arr)
 	sort.Sort(sort.Reverse(sort.IntSlice(arr)))
+	fmt.Println(arr)
 
 	var press = 0
 

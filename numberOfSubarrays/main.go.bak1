@@ -1,0 +1,66 @@
+package main
+
+import "fmt"
+
+func main() {
+	fmt.Println(atMost([]int{3, 2, 3, 4}, 1))
+
+	// fmt.Println(atMost([]int{3, 2, 3}, 1))
+
+}
+
+func numberOfSubarrays(nums []int, k int) int {
+	return atMost(nums, k) - atMost(nums, k-1)
+}
+
+// we are going to loop
+// and in each loop we count how many odd so far
+// init start, count, odd, ctr
+// in the loop
+// - check if the number is odd
+// 	- yes, odd++
+// - check if odd > k
+// 	- yes
+// 		- start++
+// 		- odd--
+// 	- no
+// 		count++
+
+// return count
+
+// [1,3,5] - at most 2
+
+// 1 - odd=1, count=1,start=0,ctr=0
+// 2 - odd=2, count=2,start=0,ctr=1, count=3
+// 3 - odd=3 => odd=2, start=1,count=4, count=5
+func atMost(nums []int, k int) int {
+
+	ctr := 0
+	odd := 0
+	start := 0
+	count := 0
+	res := [][]int{}
+	for ctr < len(nums) {
+		if nums[ctr]%2 == 1 {
+			odd++
+		}
+		for odd > k && start < ctr {
+			if nums[start]%2 == 1 {
+				odd--
+			}
+			start++
+		}
+		begin := start
+		for begin <= ctr {
+			count++
+			res = append(res, nums[begin:ctr+1])
+			begin++
+		}
+		fmt.Println("start:", start)
+		fmt.Println("ctr:", ctr)
+		ctr++
+	}
+
+	fmt.Println(res)
+	return count
+}

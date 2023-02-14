@@ -1,0 +1,94 @@
+package main
+
+import "fmt"
+
+func main() {
+
+	fmt.Println(numberOfSubarrays([]int{1, 1, 2, 1, 1}, 3))
+	fmt.Println(numberOfSubarrays([]int{2, 4, 6}, 1))
+	fmt.Println(numberOfSubarrays([]int{2, 2, 2, 1, 2, 2, 1, 2, 2, 2}, 2))
+
+}
+
+func numberOfSubarrays(nums []int, k int) int {
+
+	count := 0
+	memo := map[Memo]int{}
+	for i := 0; i < len(nums); i++ {
+		resp := countNice(memo, nums, i, k)
+		count += resp
+		// fmt.Println(resp)
+	}
+
+	return count
+}
+
+// 1,1,2,1,1
+// 1 => k = 3-1 = 2, result = 0 + countNice([1,2,1,1],2)
+// 1 => k = 2-1 = 1, result = 0 + countNice([2,1,1],1)
+// 2 => k = 1, result = 0 + countNice([1,1],1)
+// 1 => k = 1-1 = 0, result = 0 + countNice([1],0)
+// 1 => k = 0-1 = -1, result = 1 + countNice([1],-1)
+
+type Memo struct {
+	Index, k int
+}
+
+func countNice(memo map[Memo]int, nums []int, index, k int) int {
+
+	if value, ok := memo[Memo{index, k}]; ok {
+		return value
+	}
+
+	if k < 0 {
+		memo[Memo{index, k}] = 0
+		return memo[Memo{index, k}]
+	}
+
+	result := 0
+	if k == 0 {
+		result++
+	}
+	if index >= len(nums) {
+		memo[Memo{index, k}] = result
+		return memo[Memo{index, k}]
+	}
+	first := nums[index]
+	if first%2 != 0 {
+		k = k - 1
+	}
+
+	add := countNice(memo, nums, index+1, k)
+	memo[Memo{index, k}] = result + add
+	return memo[Memo{index, k}]
+}
+
+// what we can do here is probably to run a recursive function from each index
+
+// how does this recursive func looks like then?
+// basically need to count how many from that index that we can form
+//
+// 1. take the first index out
+//
+
+// 1,1,2,1,1
+// 1 - 1 - 2 - 1 => k=0 => +1
+// 1 - 1 - 2 - 1 => return 0 and stop the loop
+// this is like before returning everything - call the next one
+// in each function
+// 1. get the first index
+// 2. check:
+// - if it is odd then -> k - 1
+// 3. recursive arr-1, k
+// 4. what will be the stopping condition
+// - if k < 0 => return 0
+// - if len(arr) == 0 => return 0
+
+// 2. check:
+// 	- if it is odd then -> k - 1
+// 3. recursive arr-1, k
+// 4. what will be the stopping condition
+// - if k == 0 => return true
+// - if len(arr) == 0 => return false
+
+// improve memoization

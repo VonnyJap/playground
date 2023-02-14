@@ -1,0 +1,131 @@
+package main
+
+import "fmt"
+
+func main() {
+	fmt.Println(exist([][]byte{[]byte("ABCE"), []byte("SFCS"), []byte("ADEE")}, "ABCCED"))
+	fmt.Println(exist([][]byte{[]byte("ABCE"), []byte("SFCS"), []byte("ADEE")}, "SEE"))
+	fmt.Println(exist([][]byte{[]byte("ABCE"), []byte("SFCS"), []byte("ADEE")}, "ABCB"))
+	fmt.Println(exist([][]byte{[]byte("a")}, "a"))
+	fmt.Println(exist([][]byte{[]byte("a"), []byte("a")}, "a"))
+	fmt.Println(exist([][]byte{[]byte("CAA"), []byte("AAA"), []byte("BCD")}, "AAB"))
+}
+
+func exist(board [][]byte, word string) bool {
+
+	if len(board) == 0 {
+		if word == "" {
+			return true
+		}
+		return false
+	}
+
+	row := len(board)
+	col := len(board[0])
+
+	for i, r := range board {
+		for j, c := range r {
+			if c == word[0] {
+				grh := graph{
+					matrix:  board,
+					row:     row,
+					col:     col,
+					visited: map[Coordinate]bool{},
+					target:  word,
+				}
+				if grh.traverse(Coordinate{i, j}) {
+					return true
+				}
+			}
+		}
+	}
+	return false
+}
+
+type graph struct {
+	matrix  [][]byte
+	target  string
+	row     int
+	col     int
+	visited map[Coordinate]bool
+}
+
+type Coordinate struct {
+	x, y int
+}
+
+func (g *graph) traverse(start Coordinate) bool {
+
+	queue := [][]int{{start.x, start.y, 0}} // x,y,depth
+	word := []byte{g.matrix[start.x][start.y]}
+	// fmt.Println("begin:", string(word))
+	// fmt.Println("start:", start)
+	g.visited[start] = true
+
+	// fmt.Println("row:", g.row)
+	// fmt.Println("col:", g.col)
+
+	for len(queue) > 0 && len(word) < len(g.target) {
+		current := queue[0]
+		queue = queue[1:]
+		adjacent := [][]int{
+			{current[0] + 1, current[1]},
+			{current[0] - 1, current[1]},
+			{current[0], current[1] + 1},
+			{current[0], current[1] - 1},
+		}
+
+		// fmt.Println(adjacent)
+
+		for _, adj := range adjacent {
+			x := adj[0]
+			y := adj[1]
+			_, ok := g.visited[Coordinate{x, y}] // looking for not visited
+			if x >= 0 && x < g.row && y >= 0 && y < g.col && !ok {
+				if g.matrix[x][y] == g.target[current[2]+1] {
+					newDepth := current[2] + 1
+					queue = append(queue, []int{x, y, current[2] + 1})
+					// begin - depth = 0, word = 1 => depth +1
+					if len(word) < newDepth+1 {
+						word = append(word, g.matrix[x][y])
+					}
+					g.visited[Coordinate{x, y}] = true
+					if string(word) == g.target {
+						return true
+					}
+					// fmt.Println("word:", string(word))
+					// fmt.Println("queue: ", queue)
+				}
+			}
+		}
+		// fmt.Println(g.target)
+		// fmt.Println(string(word))
+		// fmt.Println(queue)
+	}
+
+	return string(word) == g.target
+}
+
+// for this purpose what I can do is to do dfs and make sure each time I choose another
+// route that route is something that can lead to the words that I want?
+
+// or I can use bfs so I can keep track of the level and compare the level to the word?
+
+// steps:
+// 1. find the position of starting letter
+// 2. and for each of them, do bfs
+// 3. bfs
+// 	- init queue
+// 	- init word to keep track the concatenation
+// 	- put the start+depth into queue and mark as visited
+// 	- loop through the queue
+// 		- pop one out from beginning
+// 		- recalculate the queue
+// 		- get all adjacent
+// 		- loop through adjacent and make sure that it is in bound
+// 			and it is the next letter we want
+// 		- as so as that to queue
+// 	- at the end compare the word and target
+
+// we can also use dfs with backtracking
+// each time we have to clean up the root node so it can be visited but something else in the track

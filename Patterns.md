@@ -178,6 +178,9 @@ static int fib(int n, int[] fibs) {
   4. Store the computed values of overlapping subproblems.
   5. Convert Recursive code to Memoised code.
   6. Convert Memoised code to Tabular form.
+- Normally memoized approach is solved by storing the target value because there will be multiple calls for it
+- and the next time the call is happening, we can just use that value before proceeding to the logic further
+
 
 #### Double Linked List
 - [LRU Cache](https://golangbyexample.com/lru-cache-implementation-golang/)
@@ -190,6 +193,15 @@ static int fib(int n, int[] fibs) {
 - hashmap
 
 #### Bits manipulation
+- & is a bitwise AND operator. Doing (num & 1) checks if the last bit (least significant bit) of the number is set. If it is set, the number is odd, and if it is not set, it is even.
+- AND: extract a subset of bits in a value
+- OR: set a subset of bits in a value
+- XOR: toggle a subset of bits in a value
+  - 1 ^ 1 = 0
+  - 0 ^ 1 = 1
+  - 1 ^ 0 = 1
+  - 0 ^ 0 = 0
+- complement in Go can be done using 1 ^ M
 
 #### Reference
 [14 Patterns to Ace Any Coding Interview Question](https://hackernoon.com/14-patterns-to-ace-any-coding-interview-question-c5bb3357f6ed)
@@ -218,3 +230,33 @@ Backtrack(x)
     backtrack(expand x)
 ```
 [Sample Problem: Rat in a maze](https://www.geeksforgeeks.org/rat-in-a-maze-backtracking-2/)
+
+#### BFS vs DFS
+- The main difference:
+  - BFS:  Tries to explore all the neighbors it can reach from the current node. It will use a queue data structure.
+  - DFS:  Tries to reach the farthest node from the current node and come back (backtrack) to the current node to explore its other neighbors. This will use a stack data structure.
+- We will prefer to use BFS when we know that our solution might lie closer to the starting point or if the graph has greater depths.
+- We will prefer to use DFS when we know our solution might lie farthest from the starting point or when the graph has a greater width.
+- If we have multiple starting points and the problem requires us to start traversing all those starting points parallelly then we can think of BFS as we can push all those starting points in the queue and start exploring them first.
+- It’s generally a good idea to use BFS if we need to find the shortest distance from a node in the unweighted graph.
+- We will be using DFS mostly in path-finding algorithms to find paths between nodes.
+
+
+
+#### Shortest Path
+[Ref](https://pencilprogrammer.com/algorithms/shortest-path-in-unweighted-undirected-graph-using-dfs/)
+
+
+#### Cyclic Sort Programming Pattern
+[Ref](https://stephenjoel2k.medium.com/cyclic-sort-programming-pattern-16eb16ac9c4b)
+
+#### K-way Merge
+- How to identify:
+  - The problem will feature sorted arrays, lists, or a matrix
+  - If the problem asks you to merge sorted lists, find the smallest element in a sorted list
+- Example:
+  - Merge K sorted lists
+- Steps:
+  1. Insert first number from each array into the heap
+  2. Pop out and get it merged into the return list
+  3. Heap size = number of arrays to ensure that in each run all arrays will get turn

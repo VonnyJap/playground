@@ -4,74 +4,65 @@ import "fmt"
 
 func main() {
 	fmt.Println(generateParenthesis(1))
-	// fmt.Println(generateParenthesis(2))
 	// fmt.Println(generateParenthesis(3))
-	four := generateParenthesis(4)
-	fmt.Println(four)
-	fmt.Println(len(four))
+
 }
-
-// this can be done in recursion
-// - when n==1 => "()"
-// - preprocess
-// 	1. call generateParenthesis based on n-1
-// 	2. for each result returned
-// 		- add "()" to the front -> check if exist in map
-// 		- add "()" to the back -> check if exist in map
-// 		- add "()" to the front and back -> check if exist in map
-// 	3. then return
-
-// then after that think about top down
-
-// func generateParenthesis(n int) []string {
-
-// 	if n == 1 {
-// 		return []string{"()"}
-// 	}
-
-// 	pred := generateParenthesis(n - 1)
-
-// 	dict := map[string]bool{}
-
-// 	for _, p := range pred {
-// 		if _, ok := dict[fmt.Sprintf("()%s", p)]; !ok {
-// 			dict[fmt.Sprintf("()%s", p)] = true
-// 		}
-// 		if _, ok := dict[fmt.Sprintf("%s()", p)]; !ok {
-// 			dict[fmt.Sprintf("%s()", p)] = true
-// 		}
-// 		if _, ok := dict[fmt.Sprintf("(%s)", p)]; !ok {
-// 			dict[fmt.Sprintf("(%s)", p)] = true
-// 		}
-// 	}
-
-// 	result := []string{}
-
-// 	for k := range dict {
-// 		result = append(result, k)
-// 	}
-// 	return result
-// }
-
-var result = []string{}
 
 func generateParenthesis(n int) []string {
-	result = []string{}
-	dfs(0, 0, n, "")
-	return result
+	output := []string{}
+	generateParenthesisUtil2("(", n, &output)
+	return output
 }
 
-func dfs(left, right, n int, s string) {
+func generateParenthesisUtil(prefix string, n int) []string {
+	if len(prefix) == n*2 {
+		if isValid(prefix) {
+			return []string{prefix}
+		}
+		return []string{}
+	}
+	return append(generateParenthesisUtil(prefix+")", n), generateParenthesisUtil(prefix+"(", n)...)
+}
 
-	if len(s) == n*2 {
-		result = append(result, s)
+func generateParenthesisUtil2(prefix string, n int, output *[]string) {
+	if len(prefix) == n*2 {
+		if isValid(prefix) {
+			*output = append(*output, prefix)
+			// fmt.Println(output)
+			return
+		}
 		return
 	}
+	// fmt.Println("output1: ", output)
+	generateParenthesisUtil2(prefix+")", n, output)
+	// fmt.Println("output2: ", output)
+	generateParenthesisUtil2(prefix+"(", n, output)
+	// fmt.Println("output3: ", output)
+	// return append(generateParenthesisUtil(prefix+")", n), generateParenthesisUtil(prefix+"(", n)...)
+}
 
-	if left < n {
-		dfs(left+1, right, n, s+"(")
+func isValid(s string) bool {
+
+	if len(s)%2 != 0 {
+		return false
 	}
-	if right < left {
-		dfs(left, right+1, n, s+")")
+	stack := []string{}
+
+	for ctr := 0; ctr < len(s); ctr++ {
+		if len(stack) == 0 {
+			stack = append(stack, string(s[ctr]))
+			continue
+		}
+		var parentheses = stack[len(stack)-1] + string(s[ctr])
+		if parentheses == "()" || parentheses == "[]" || parentheses == "{}" {
+			stack = stack[:len(stack)-1]
+			continue
+		}
+		stack = append(stack, string(s[ctr]))
 	}
+
+	if len(stack) == 0 {
+		return true
+	}
+	return false
 }

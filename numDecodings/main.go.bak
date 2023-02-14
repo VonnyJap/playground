@@ -1,0 +1,76 @@
+package main
+
+import (
+	"fmt"
+	"strconv"
+	"strings"
+)
+
+func main() {
+	fmt.Println(numDecodings("12"))
+	fmt.Println(numDecodings("226"))
+	fmt.Println(numDecodings("11106"))
+}
+
+func numDecodings(s string) int {
+
+	combinations := possibleCombinations(s)
+	count := 0
+	for _, c := range combinations {
+		digits := strings.Split(c, "+")
+		good := true
+		for _, d := range digits {
+			if d[0] == '0' {
+				good = false
+				break
+			}
+			num, _ := strconv.Atoi(d)
+			if num > 26 {
+				good = false
+				break
+			}
+		}
+		if good {
+			count++
+		}
+	}
+
+	return count
+}
+
+func possibleCombinations(s string) []string {
+
+	if len(s) == 0 {
+		return []string{}
+	}
+	if len(s) == 1 {
+		return []string{s}
+	}
+
+	result := []string{}
+
+	lessOne := possibleCombinations(s[1:])
+	for _, one := range lessOne {
+		result = append(result, fmt.Sprintf("%s+%s", s[:1], one))
+	}
+
+	lessTwo := possibleCombinations(s[2:])
+	for _, two := range lessTwo {
+		result = append(result, fmt.Sprintf("%s+%s", s[:2], two))
+	}
+	if len(lessTwo) == 0 {
+		result = append(result, s[:2])
+	}
+
+	return result
+}
+
+// 11106
+
+// 11 10 6 => ok
+// 11 1 06 => impossible
+// 11 1 0 6 => impossible
+// 1 1 1 0 6 => impossible
+// 1 11 0 6 => impossible
+// 1 1 10 6 => ok
+// 1 1 1 06 => impossible
